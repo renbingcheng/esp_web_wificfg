@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <!-- 设置字符编码为 UTF-8 -->
+    <meta charset="UTF-8">
+    <!-- 设置视口宽度为设备宽度，初始缩放比例为1 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 设置页面标题 -->
+    <title>WiFi 密码配置</title>
+    <!-- 内嵌样式表 -->
+    <style>
+        /* 设置表单容器的宽度和居中 */
+        .form-container {
+            width: 1000px;
+            margin: 0 auto;
+        }
+        /* 设置标签和输入框的显示方式和底部外边距 */
+        label, input {
+            display: block;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- 表单容器 -->
+    <div class="form-container">
+        <!-- 标题 -->
+        <h3>WiFi 密码配置</h3>
+        <!-- 表单内容 -->
+        <form>
+            <!-- WiFi名称输入框 -->
+            <label for="wifi">WiFi 名称</label>
+            <input type="text" id="wifi" name="wifi_name" placeholder="ssid">
+                    <!-- 密码输入框 -->
+        <label for="code">密码</label>
+        <input type="text" id="code" name="wifi_code" placeholder="password">
+    
+        <!-- 提交按钮，点击时触发 send_wifi 函数 -->
+        <button id="send_WIFI" type="button" onclick="send_wifi()">提交</button>
+    </form>
+</div>
+<!-- JavaScript代码 -->
+<script>
+    // send_wifi 函数：向服务器发送WiFi名称和密码
+    function send_wifi() {
+        // 获取输入框中的 WiFi 名称
+        var input_ssid = document.getElementById("wifi").value;
+        // 获取输入框中的密码
+        var input_code = document.getElementById("code").value;
+        // 创建一个新的 XMLHttpRequest 对象
+        var xhttp = new XMLHttpRequest();
+        // 初始化一个 POST 请求，发送到 /wifi_data 路径
+        xhttp.open("POST", "/wifi_data", true);
+        // 当请求状态发生变化时触发的回调函数
+        xhttp.onreadystatechange = function() {
+            // 当请求完成时
+            if (xhttp.readyState == 4) {
+                // 当请求成功时
+                if (xhttp.status == 200) {
+                    console.log(xhttp.responseText);
+                // 当服务器意外关闭连接时
+                } else if (xhttp.status == 0) {
+                    alert("Server closed the connection abruptly!");
+                    location.reload()
+                // 当发生其他错误时
+                } else {
+                    alert(xhttp.status + " Error!\n" + xhttp.responseText);
+                    location.reload()
+                }
+            }
+        };
+        // 准备发送的数据，包含 WiFi 名称和密码
+        var data = {
+            "wifi_name": input_ssid,
+            "wifi_code": input_code
+        }
+        // 发送请求，数据以 JSON 格式发送
+        xhttp.send(JSON.stringify(data));
+    }
+</script>
+</body>
+</html>
+            
