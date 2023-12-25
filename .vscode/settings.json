@@ -13,8 +13,11 @@
     "idf.pythonBinPathWin": "D:/Espressif/python_env/idf4.4_py3.8_env/Scripts/python.exe",
     "idf.toolsPathWin": "D:\\Espressif",
     "idf.flashType": "UART",
-    "idf.portWin": "COM3",
+    "idf.portWin": "COM7",
     "files.associations": {
-        "esp_event.h": "c"
+        "esp_event.h": "c",
+        "future": "c",
+        "system_error": "c",
+        "regex": "c"
     }
 }

@@ -6,7 +6,7 @@
     "config_defaults":    "D:/esp_project/esp_wifi_webcfg/sdkconfig.defaults",
     "app_elf":            "esp_wifi_webcfg.elf",
     "app_bin":            "esp_wifi_webcfg.bin",
-    "git_revision":       "v4.4.3-dirty",
+    "git_revision":       "v4.4.3-1-g8b4a28b-dirty",
     "target":             "esp32c3",
     "rev":                "",
     "phy_data_partition": "",

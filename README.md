@@ -1,116 +1,111 @@
-# Simple HTTP File Server Example
+# README: ESP32C3 Web Server for WiFi Configuration
 
-(See the README.md file in the upper level 'examples' directory for more information about examples.)
+## 概述 - Overview
 
-HTTP file server example demonstrates file serving with both upload and download capability, using the `esp_http_server` component of ESP-IDF. This example can use one of the following options for data storage:
+本 README 提供了使用 ESP-IDF 框架提供的代码，在 ESP32C3 上创建一个用于配置 WiFi 参数的 Web 服务器的指南。此代码允许您设置一个 Web 页面，用户可以在其中输入 ESP32C3 连接到 WiFi 网络所需的 WiFi SSID 和密码。
 
-- SPIFFS filesystem in SPI Flash. This option works on any ESP development board without any extra hardware.
+This README provides instructions on how to use the provided code with ESP-IDF framework to create a web server on ESP32C3 for configuring WiFi parameters. This code allows you to set up a web page where users can input the WiFi SSID and password required for ESP32C3 to connect to a WiFi network.
 
-- FAT filesystem on an SD card. Both SDSPI and SDMMC drivers are supported. You need a development board with an SD card slot to use this option.
+## 先决条件 - Prerequisites
 
-The following URIs are provided by the server:
+在开始之前，请确保满足以下先决条件：
 
-| URI                  | Method  | Description                                                                               |
-|----------------------|---------|-------------------------------------------------------------------------------------------|
-|`index.html`          | GET     | Redirects to `/`                                                                          |
-|`favicon.ico`         | GET     | Browsers use this path to retrieve page icon which is embedded in flash                   |
-|`/`                   | GET     | Responds with webpage displaying list of files on the filesystem and form for uploading new files |
-|`/<file path>`        | GET     | For downloading files stored on the filesystem                                                    |
-|`/upload/<file path>` | POST    | For uploading files on to the filesystem. Files are sent as body of HTTP post requests            |
-|`/delete/<file path>` | POST    | Command for deleting a file from the filesystem                                                   |
+Before you begin, make sure you have the following prerequisites in place:
 
-File server implementation can be found under `main/file_server.c`. `main/upload_script.html` has some HTML, JavaScript and Ajax content used for file uploading, which is embedded in the flash image and used as it is when generating the home page of the file server.
+1. [ESP-IDF](https://docs.espressif.com/projects/esp-idf/en/latest/esp32c3/get-started/index.html) 开发环境已设置好。
 
-Note that the default `/index.html` and `/favicon.ico` files can be overridden by uploading files with same name to the filesystem.
+   - ESP-IDF development environment is set up.
 
-## How to use the example
+2. 对 ESP-IDF 和 ESP32C3 有基本了解。
 
-### Wi-Fi/Ethernet connection
-```
-idf.py menuconfig
-```
-Open the project configuration menu (`idf.py menuconfig`) to configure Wi-Fi or Ethernet. See "Establishing Wi-Fi or Ethernet Connection" section in [examples/protocols/README.md](../../README.md) for more details.
+   - Basic knowledge of ESP-IDF and ESP32C3.
 
-### SD card (optional)
+## 入门 - Getting Started
 
-By default the example uses SPIFFS filesystem in SPI flash for file storage.
+1. 将提供的代码复制到您的 ESP-IDF 项目目录中或创建一个新的 ESP-IDF 项目。
 
-To use an SD card for file storage instead, open the project configuration menu (`idf.py menuconfig`) and enter "File_serving example menu". Then enable "Use SD card for file storage" (`CONFIG_EXAMPLE_MOUNT_SD_CARD`) option.
+   - Copy the provided code into your ESP-IDF project directory or create a new ESP-IDF project.
 
-SD cards can be used either over SPI interface (on all ESP chips) or over SDMMC interface (on ESP32 and ESP32-S3). To use SDMMC interface, enable "Use SDMMC host" (`CONFIG_EXAMPLE_USE_SDMMC_HOST`) option. To use SPI interface, disable this option.
+2. 修改代码中的以下变量以匹配您的 WiFi 网络设置：
 
-GPIO pins used to connect the SD card can be configured for the SPI interface (on all chips), or for SDMMC interface on chips where it uses GPIO matrix (ESP32-S3). This can be done in "SD card pin configuration" submenu.
+   - `EXAMPLE_ESP_WIFI_SSID`：设置为您的 WiFi 网络的 SSID（名称）。
+   - `EXAMPLE_ESP_WIFI_PASS`：设置为您的 WiFi 网络的密码。
+   - `EXAMPLE_ESP_WIFI_CHANNEL`：设置 WiFi 信道（通常为 1）。
+   - `EXAMPLE_MAX_STA_CONN`：设置最大站点连接数（默认为 4）。
+   - `EXAMPLE_ESP_MAXIMUM_RETRY`：设置最大连接重试次数。
 
-The example will be able to mount only cards formatted using FAT32 filesystem. If the card is formatted as exFAT or some other filesystem, you have an option to format it in the example code — "Format the card if mount failed" (`CONFIG_EXAMPLE_FORMAT_IF_MOUNT_FAILED`).
+   - Modify the following variables in the code to match your WiFi network settings:
 
-For more information on pin configuration for SDMMC and SDSPI, check related examples: [sdmmc](../../../storage/sd_card/sdmmc/README.md), [sdspi](../../../storage/sd_card/sdmmc/README.md).
+     - `EXAMPLE_ESP_WIFI_SSID`: Set this to your WiFi network's SSID (name).
+     - `EXAMPLE_ESP_WIFI_PASS`: Set this to your WiFi network's password.
+     - `EXAMPLE_ESP_WIFI_CHANNEL`: Set the WiFi channel (usually 1).
+     - `EXAMPLE_MAX_STA_CONN`: Set the maximum number of station connections (default is 4).
+     - `EXAMPLE_ESP_MAXIMUM_RETRY`: Set the maximum number of connection retries.
 
-### Build and Flash
+3. 使用 ESP-IDF 工具构建并烧写代码到您的 ESP32C3 设备。确保选择了正确的目标和串口端口。
 
-Build the project and flash it to the board, then run monitor tool to view serial output:
+   - Build and flash the code to your ESP32C3 device using the ESP-IDF tools. Make sure you have selected the correct target and serial port.
 
-```
-idf.py -p PORT flash monitor
-```
+4. 烧写完成后，ESP32C3 将启动为一个软接入点（AP），使用您在步骤 2 中配置的 SSID 和密码。
 
-(Replace PORT with the name of the serial port to use.)
+   - After flashing, the ESP32C3 will start as a soft access point (AP) with the SSID and password you configured in step 2.
 
-(To exit the serial monitor, type ``Ctrl-]``.)
+## 使用方法 - Usage
 
-See the Getting Started Guide for full steps to configure and use ESP-IDF to build projects.
+1. 使用您配置的 SSID 和密码，将计算机或移动设备连接到 ESP32C3 创建的 WiFi 网络。
 
-### Working with the example
+   - Connect your computer or mobile device to the WiFi network created by the ESP32C3 using the SSID and password you configured.
 
-1. Note down the IP assigned to your ESP module. The IP address is logged by the example as follows:
+2. 打开 Web 浏览器并导航到 ESP32C3 的 IP 地址。您可以在 ESP32C3 启动时的串口控制台输出中找到 IP 地址。
 
-   ```
-   I (5424) example_connect: - IPv4 address: 192.168.1.100
-   I (5424) example_connect: - IPv6 address:    fe80:0000:0000:0000:86f7:03ff:fec0:1620, type: ESP_IP6_ADDR_IS
-   ```
+   - Open a web browser and navigate to the ESP32C3's IP address. You can find the IP address in the serial console output of the ESP32C3 when it starts.
 
-   The following steps assume that IP address 192.168.1.100 was assigned.
+3. 您将看到一个 Web 页面，在该页面上，您可以输入要为 ESP32C3 配置的 WiFi SSID 和密码。
 
-2. Test the example interactively in a web browser. The default port is 80. 
+   - You will be presented with a web page where you can enter the WiFi SSID and password you want to configure for the ESP32C3.
 
-    1. Open path http://192.168.1.100/ or http://192.168.1.100/index.html to see an HTML page with list of files on the server. The page will initially be empty.
-    2. Use the file upload form on the webpage to select and upload a file to the server.
-    3. Click a file link to download / open the file on browser (if supported).
-    4. Click the delete link visible next to each file entry to delete them.
+4. 输入 WiFi SSID 和密码，然后单击 "提交" 按钮。
 
-3. Test the example using curl:
+   - Enter the WiFi SSID and password, then click the "Submit" button.
 
-    1. `myfile.html` can be uploaded to `/path/on/device/myfile_copy.html` using:
-       ```
-       curl -X POST --data-binary @myfile.html 192.168.43.130:80/upload/path/on/device/myfile_copy.html
-       ```
+5. ESP32C3 将处理输入的数据并尝试连接到指定的 WiFi 网络。
 
-    2. Download the uploaded file back:
-       ```
-       curl 192.168.43.130:80/path/on/device/myfile_copy.html > myfile_copy.html`
-       ```
+   - The ESP32C3 will process the entered data and attempt to connect to the specified WiFi network.
 
-    3. Compare the copy with the original using `cmp myfile.html myfile_copy.html`
+6. 您可以在串口控制台中监视 ESP32C3 的状态。它将指示连接是否成功。
 
+   - You can monitor the ESP32C3's status in the serial console. It will indicate whether the connection was successful or not.
 
-## Note
+## 故障排除 - Troubleshooting
 
-Browsers often send large header fields when an HTML form is submit. Therefore, for the purpose of this example, `HTTPD_MAX_REQ_HDR_LEN` has been increased to 1024 in `sdkconfig.defaults`. User can adjust this value as per their requirement, keeping in mind the memory constraint of the hardware in use.
+如果遇到任何问题，请考虑以下故障排除步骤：
 
-## Example Output
+If you encounter any issues, consider the following troubleshooting steps:
 
-```
-I (5583) example_connect: Got IPv6 event: Interface "example_connect: sta" address: fe80:0000:0000:0000:266f:28ff:fe80:2c74, type: ESP_IP6_ADDR_IS_LINK_LOCAL
-I (5583) example_connect: Connected to example_connect: sta
-I (5593) example_connect: - IPv4 address: 192.168.194.219
-I (5593) example_connect: - IPv6 address: fe80:0000:0000:0000:266f:28ff:fe80:2c74, type: ESP_IP6_ADDR_IS_LINK_LOCAL
-I (5603) example: Initializing SPIFFS
-I (5723) example: Partition size: total: 896321, used: 0
-I (5723) file_server: Starting HTTP Server on port: '80'
-I (28933) file_server: Receiving file : /test.html...
-I (28933) file_server: Remaining size : 574
-I (28943) file_server: File reception complete
-I (28993) file_server: Found file : test.html (574 bytes)
-I (35943) file_server: Sending file : /test.html (574 bytes)...
-I (35953) file_server: File sending complete
-I (45363) file_server: Deleting file : /test.html
-```
+- 检查串口控制台是否有任何错误消息或调试信息。
+
+   - Check the serial console for any error messages or debug information.
+
+- 确保您输入了正确的 WiFi SSID 和密码。
+
+   - Ensure that you entered the correct WiFi SSID and password.
+
+- 验证您的 ESP32C3 设备是否在 WiFi 网络的范围内。
+
+   - Verify that your ESP32C3 device is within range of your WiFi network.
+
+- 确保您正在连接到具有稳定互联网连接的网络。
+
+   - Make sure you have a stable internet connection on the network you're trying to connect to.
+
+## 自定义 - Customization
+
+您可以进一步自定义此代码以满足您的特定需求。例如，您可以修改 Web 页面的外观，添加附加的配置选项，或将其与 ESP32C3 项目的其他组件集成。
+
+   - You can further customize this code to fit your specific requirements. For example, you can modify the web page's appearance, add additional configuration options, or integrate it with other components of your ESP32C3 project.
+
+## 结论 - Conclusion
+
+您已成功设置了一个用于配置 WiFi 参数的 ESP32C3 Web 服务器。这可以是物联网设备的有用功能，用于连接到不同的 WiFi 网络或用于 ESP32C3 基础项目的初始设置。
+
+   - You have successfully set up an ESP32C3 web server for configuring WiFi parameters. This can be a useful feature for IoT devices that need to connect to different WiFi networks or for

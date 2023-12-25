@@ -29,7 +29,6 @@
 #include "protocol_examples_common.h"
 
 #define EXAMPLE_ESP_WIFI_SSID      "WIFI_CONFIG"
-//#define EXAMPLE_ESP_WIFI_PASS      "12345678"
 #define EXAMPLE_ESP_WIFI_PASS      "12345678"
 #define EXAMPLE_ESP_WIFI_CHANNEL   1
 #define EXAMPLE_MAX_STA_CONN       4
@@ -50,7 +49,7 @@ static EventGroupHandle_t s_wifi_event_group;
 
 static const char *TAG = "example";
 
-esp_err_t start_file_server();
+esp_err_t start_web_server();
 
 static void wifi_event_handler(void* arg, esp_event_base_t event_base,
                                     int32_t event_id, void* event_data)
@@ -203,7 +202,7 @@ void app_main(void)
     // ESP_ERROR_CHECK(example_connect());
     wifi_init_softap();
     /* Start the file server */
-    ESP_ERROR_CHECK(start_file_server());
+    ESP_ERROR_CHECK(start_web_server());
        vTaskDelay(60000 / portTICK_PERIOD_MS);
     //wifi_init_sta(wifi_ssid,wifi_password);
     esp_wifi_stop();
